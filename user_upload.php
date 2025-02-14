@@ -52,3 +52,6 @@ if (isset($options['create_table'])) {
 
     exit(0);
 }
+
+echo "Error: No valid options provided. Use --help for usage information.\n";
+exit(1);
