@@ -23,6 +23,10 @@ if (isset($options['help'])) {
 }
 
 if (isset($options['create_table'])) {
+    if (!isset($options['u']) || !isset($options['p']) || !isset($options['h'])) {
+        die("Error: Missing required options! Please provide -u (username), -p (password), and -h (host) when using --create_table.\n");
+    }
+
     $host = $options['h'];
     $username = $options['u'];
     $password = $options['p'];
