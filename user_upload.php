@@ -15,9 +15,36 @@ function printHelp() {
     exit(0);
 }
 
-$options = getopt("", ["help"]);
+$options = getopt("", ["file:", "create_table", "dry_run", "help"]);
 
 if (isset($options['help'])) {
     printHelp();
+    exit(0);
+}
+
+if (isset($options['create_table'])) {
+    $host = $options['h'];
+    $username = $options['u'];
+    $password = $options['p'];
+    $dbName = 'user_data_importer';
+
+    try {
+        $dsn = "pgsql:host=$host;dbname=$dbName";
+        $pdo = new PDO($dsn, $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $pdo->exec("DROP TABLE IF EXISTS users");
+        $pdo->exec("CREATE TABLE users (
+            id      BIGSERIAL       PRIMARY KEY,
+            name    VARCHAR(255)    NOT NULL,
+            surname VARCHAR(255)    NOT NULL,
+            email   VARCHAR(255)    UNIQUE NOT NULL
+        )");
+
+        echo "Success: The 'users' table has been created and is all set for use.\n";
+    } catch (PDOException $e) {
+        die("Error: Failed to create 'users' table. " . $e->getMessage() . "\n");
+    }
+
     exit(0);
 }
