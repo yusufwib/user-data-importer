@@ -5,6 +5,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Commands\CreateTableCommand;
 use App\Commands\HelpCommand;
+use App\Commands\DryRunCommand;
 use App\Utilities\CliHelper;
 
 function main(): void {
@@ -18,6 +19,13 @@ function main(): void {
 
         if (isset($options['create_table'])) {
             (new CreateTableCommand($options))->execute();
+            exit(0);
+        }
+
+        if (isset($options['file'])) {
+            if (isset($options['dry_run'])) {
+                (new DryRunCommand($options['file']))->execute();
+            }
             exit(0);
         }
 
