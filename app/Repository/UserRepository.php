@@ -23,4 +23,17 @@ class UserRepository {
             )
         ");
     }
+
+    public function insertUser(User $user): void {
+        $stmt = $this->connection->prepare("
+            INSERT INTO users (name, surname, email)
+            VALUES (:name, :surname, :email)
+        ");
+
+        $stmt->execute([
+            ':name'     => $user->getName(),
+            ':surname'  => $user->getSurname(),
+            ':email'    => $user->getEmail()
+        ]);
+    }
 }
