@@ -5,9 +5,10 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Commands\CreateTableCommand;
 use App\Commands\HelpCommand;
+use App\Utilities\CliHelper;
 
 function main(): void {
-    $options = getopt("u:p:h:", ["file:", "create_table", "dry_run", "help"]);
+    $options = CliHelper::getOptions();
 
     try {
         if (isset($options['help'])) {

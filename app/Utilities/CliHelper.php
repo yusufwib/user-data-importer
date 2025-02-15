@@ -3,6 +3,10 @@
 namespace App\Utilities;
 
 class CliHelper {
+    public static function getOptions(): array {
+        return getopt("u:p:h:", ["file:", "create_table", "dry_run", "help"]);
+    }
+
     public static function printHelp(): void {
         echo "Usage: php user_upload.php [options]\n\n";
         echo "Options:\n";
