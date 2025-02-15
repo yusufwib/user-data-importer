@@ -10,6 +10,7 @@ use App\Utilities\CliHelper;
 
 function main(): void {
     $options = CliHelper::getOptions();
+    $executed = false;
 
     try {
         if (isset($options['help'])) {
@@ -19,18 +20,21 @@ function main(): void {
 
         if (isset($options['create_table'])) {
             (new CreateTableCommand($options))->execute();
-            exit(0);
+            $executed = true;
         }
 
         if (isset($options['file'])) {
             if (isset($options['dry_run'])) {
                 (new DryRunCommand($options['file']))->execute();
             }
-            exit(0);
+            $executed = true;
         }
 
-        fwrite(STDERR, "Error: No valid options provided. Use --help for usage information.\n");
-        exit(1);
+        if (!$executed) {
+            fwrite(STDERR, "Error: No valid options provided. Use --help for usage information.\n");
+            exit(1);
+        }
+        exit(0);
     } catch (Throwable $e) {
         fwrite(STDERR, "Fatal Error: " . $e->getMessage() . "\n");
         exit(1);
