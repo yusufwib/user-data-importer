@@ -6,6 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use App\Commands\CreateTableCommand;
 use App\Commands\HelpCommand;
 use App\Commands\DryRunCommand;
+use App\Commands\ImportCsvCommand;
 use App\Utilities\CliHelper;
 
 function main(): void {
@@ -26,7 +27,10 @@ function main(): void {
         if (isset($options['file'])) {
             if (isset($options['dry_run'])) {
                 (new DryRunCommand($options['file']))->execute();
+            } else {
+                (new ImportCsvCommand($options))->execute();
             }
+
             $executed = true;
         }
 
