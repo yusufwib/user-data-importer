@@ -14,10 +14,14 @@ class DryRunCommand {
 
     public function execute(): void {
         $processor = new CsvProcessor();
-        $users = $processor->processFile($this->filePath);
+        $result = $processor->processFile($this->filePath);
 
-        foreach ($users as $u) {
+        foreach ($result['users'] as $u) {
             print_r($u);
+        }
+
+        foreach ($result['errors'] as $e) {
+            print_r($e);
         }
 
         echo "Dry run complete\n";
