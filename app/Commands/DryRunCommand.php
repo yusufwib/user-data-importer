@@ -13,8 +13,11 @@ class DryRunCommand {
     }
 
     public function execute(): void {
-        if (!file_exists($this->filePath)) {
-            throw new \RuntimeException("CSV file not found: " . $this->filePath);
+        $processor = new CsvProcessor();
+        $users = $processor->processFile($this->filePath);
+
+        foreach ($users as $u) {
+            print_r($u);
         }
 
         echo "Dry run complete\n";
