@@ -16,6 +16,16 @@ class CsvProcessor {
         $errors = [];
         $lineNumber = 0;
 
+        $header = fgetcsv($handle);
+        $lineNumber++;
+        
+        try {
+            $this->validateHeader($header);
+        } catch (\InvalidArgumentException $e) {
+            fclose($handle);
+            throw new \RuntimeException("CSV header invalid: " . $e->getMessage());
+        }
+
         while (($row = fgetcsv($handle)) !== false) {
             $lineNumber++;
             
@@ -36,6 +46,22 @@ class CsvProcessor {
             'users' => $users,
             'errors' => $errors
         ];
+    }
+
+    private function validateHeader(array $header): void {
+        $expected = ['name', 'surname', 'email'];
+        
+        $normalizedHeader = array_map(function($item) {
+            return strtolower(trim($item));
+        }, $header);
+
+        if ($normalizedHeader !== $expected) {
+            $expectedString = implode(', ', $expected);
+            $actualString = implode(', ', $header);
+            throw new \InvalidArgumentException(
+                "Invalid columns. Expected: [$expectedString], Found: [$actualString]"
+            );
+        }
     }
 
     private function formatName(string $name): string {
