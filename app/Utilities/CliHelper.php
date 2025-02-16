@@ -37,4 +37,14 @@ class CliHelper {
         echo "  - Email: Lowercased and validated.\n";
         echo "  - Name/Surname: Auto-capitalized.\n";
     }
+
+    public static function log(string $type, string $message): void {
+        if ($type === 'SUCCESS') {
+            fwrite(STDOUT, "[" . date('Y-m-d H:i:s') . "] ✅: " . $message . "\n");
+        } else if ($type === 'ERROR') {
+            fwrite(STDERR, "[" . date('Y-m-d H:i:s') . "] ❌: " . $message . "\n");
+        } else if ($type === 'PLAIN') {
+            fwrite(STDOUT, $message "\n");
+        }
+    }
 }
