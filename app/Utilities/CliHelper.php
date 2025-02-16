@@ -4,7 +4,16 @@ namespace App\Utilities;
 
 class CliHelper {
     public static function getOptions(): array {
-        return getopt("u:p:h:", ["file:", "create_table", "dry_run", "help"]);
+        return getopt("u:p:h:", [
+            "file:",
+            "create_table",
+            "dry_run",
+            "help",
+            "db_name",
+            "ignore_duplicates",
+            "use_transactions",
+            "batch_size",
+        ]);
     }
 
     public static function printHelp(): void {
@@ -38,13 +47,21 @@ class CliHelper {
         echo "  - Name/Surname: Auto-capitalized.\n";
     }
 
-    public static function log(string $type, string $message): void {
-        if ($type === 'SUCCESS') {
-            fwrite(STDOUT, "[" . date('Y-m-d H:i:s') . "] ✅: " . $message . "\n");
-        } else if ($type === 'ERROR') {
-            fwrite(STDERR, "[" . date('Y-m-d H:i:s') . "] ❌: " . $message . "\n");
-        } else if ($type === 'PLAIN') {
-            fwrite(STDOUT, $message "\n");
+    public static function log(string $type, string $message, bool $withTimestamp = false): void  {
+        $timestamp = $withTimestamp ? "[" . date('Y-m-d H:i:s') . "] " : "";
+        $logTypes = [
+            Constants::LOG_TYPE_SUCCESS => ["✅", "\033[32m"],
+            Constants::LOG_TYPE_ERROR   => ["❌", "\033[31m"],
+            Constants::LOG_TYPE_PLAIN   => ["", "\033[0m"],
+        ];
+
+        $logType = $logTypes[$type] ?? $logTypes[Constants::LOG_TYPE_PLAIN];
+        $formattedMessage = "{$logType[1]}{$timestamp}{$logType[0]} $message\033[0m\n";
+
+        if ($type === Constants::LOG_TYPE_ERROR) {
+            fwrite(STDERR, $formattedMessage);
+        } else {
+            fwrite(STDOUT, $formattedMessage);
         }
     }
 }
