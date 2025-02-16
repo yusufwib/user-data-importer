@@ -31,8 +31,8 @@ class CsvProcessor {
             
             try {
                 $users[] = new User(
-                    $this->formatName($row[0] ?? ''),
-                    $this->formatName($row[1] ?? ''),
+                    $this->validateAndFormatName($row[0] ?? ''),
+                    $this->validateAndFormatName($row[1] ?? ''),
                     $this->validateEmail($row[2] ?? '')
                 );
             } catch (\InvalidArgumentException $e) {
@@ -64,9 +64,13 @@ class CsvProcessor {
         }
     }
 
-    private function formatName(string $name): string {
+    private function validateAndFormatName(string $name): string {
         $name = trim($name);
-        return ucfirst(strtolower($name));
+        if (!preg_match("/^[\p{L}\'-]+(?: [\p{L}\'-]+)*$/u", $name)) { // allows letters, spaces, hyphens, and apostrophes
+            throw new \InvalidArgumentException("Invalid name format: $name");
+        }
+
+        return ucwords(mb_strtolower($name, 'UTF-8'));
     }
 
     private function validateEmail(string $email): string {
