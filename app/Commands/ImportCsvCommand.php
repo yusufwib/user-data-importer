@@ -11,10 +11,12 @@ use App\Utilities\CliHelper;
 class ImportCsvCommand {
     private $options;
     private $filePath;
+    private $ignoreDuplicates;
 
     public function __construct(array $options) {
-        $this->options = $options;
-        $this->filePath = $options['file'];
+        $this->options          = $options;
+        $this->filePath         = $options['file'];
+        $this->ignoreDuplicates = isset($options['ignore_duplicates']);
     }
 
     public function execute(): void {
@@ -32,9 +34,9 @@ class ImportCsvCommand {
         $dbConfig = new DatabaseConfig($this->options);
         $db = new DatabaseConnection($dbConfig);
         $repository = new UserRepository($db->getConnection());
-        
+
         foreach ($result['users'] as $user) {
-            $repository->insertUser($user);
+            $repository->insertUser($user, $this->ignoreDuplicates);
         }
     }
 }

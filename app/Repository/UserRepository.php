@@ -24,16 +24,21 @@ class UserRepository {
         ");
     }
 
-    public function insertUser(User $user): void {
-        $stmt = $this->connection->prepare("
+    public function insertUser(User $user, bool $ignoreDuplicates = false): void {
+        $sql = "
             INSERT INTO users (name, surname, email)
             VALUES (:name, :surname, :email)
-        ");
+        ";
 
+        if ($ignoreDuplicates) {
+            $sql .= " ON CONFLICT (email) DO NOTHING";
+        }
+    
+        $stmt = $this->connection->prepare($sql);
         $stmt->execute([
-            ':name'     => $user->getName(),
-            ':surname'  => $user->getSurname(),
-            ':email'    => $user->getEmail()
+            ':name'    => $user->getName(),
+            ':surname' => $user->getSurname(),
+            ':email'   => $user->getEmail()
         ]);
-    }
+    }    
 }
