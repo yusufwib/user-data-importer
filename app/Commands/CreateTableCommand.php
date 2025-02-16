@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Database\DatabaseConfig;
 use App\Database\DatabaseConnection;
 use App\Repository\UserRepository;
 use App\Utilities\CliHelper;
@@ -18,13 +19,8 @@ class CreateTableCommand {
             throw new \InvalidArgumentException("Missing required options! Please provide -u (username), -p (password), and -h (host) when using --create_table");
         }
 
-        $db = new DatabaseConnection(
-            $this->options['h'],
-            $this->options['u'],
-            $this->options['p'],
-            'user_data_importer'
-        );
-
+        $dbConfig = new DatabaseConfig($this->options);
+        $db = new DatabaseConnection($dbConfig);
         $repository = new UserRepository($db->getConnection());
         $repository->createTable();
         

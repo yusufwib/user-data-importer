@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Database\DatabaseConfig;
 use App\Database\DatabaseConnection;
 use App\Repository\UserRepository;
 use App\Services\CsvProcessor;
@@ -28,13 +29,8 @@ class ImportCsvCommand {
             print_r($e);
         }
 
-        $db = new DatabaseConnection(
-            $this->options['h'],
-            $this->options['u'],
-            $this->options['p'],
-            'user_data_importer'
-        );
-
+        $dbConfig = new DatabaseConfig($this->options);
+        $db = new DatabaseConnection($dbConfig);
         $repository = new UserRepository($db->getConnection());
         
         foreach ($result['users'] as $user) {
