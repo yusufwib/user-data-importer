@@ -24,21 +24,50 @@ class UserRepository {
         ");
     }
 
-    public function insertUser(User $user, bool $ignoreDuplicates = false): void {
-        $sql = "
-            INSERT INTO users (name, surname, email)
-            VALUES (:name, :surname, :email)
-        ";
-
-        if ($ignoreDuplicates) {
-            $sql .= " ON CONFLICT (email) DO NOTHING";
+    public function insertUsers(
+        array $users, 
+        bool $ignoreDuplicates = false, 
+        bool $useTransaction = false,
+        int $batchSize = 100
+    ): void {
+        $batches = array_chunk($users, $batchSize);
+        if ($useTransaction) {
+            $this->connection->beginTransaction();
         }
     
-        $stmt = $this->connection->prepare($sql);
-        $stmt->execute([
-            ':name'    => $user->getName(),
-            ':surname' => $user->getSurname(),
-            ':email'   => $user->getEmail()
-        ]);
-    }    
+        try {
+            foreach ($batches as $batch) {
+                $placeholders = [];
+                $values = [];
+    
+                foreach ($batch as $index => $user) {
+                    $placeholders[] = "(:name{$index}, :surname{$index}, :email{$index})";
+                    $values[":name{$index}"] = $user->getName();
+                    $values[":surname{$index}"] = $user->getSurname();
+                    $values[":email{$index}"] = $user->getEmail();
+                }
+    
+                $sql = "INSERT INTO users (name, surname, email) VALUES " . implode(", ", $placeholders);
+    
+                if ($ignoreDuplicates) {
+                    $sql .= " ON CONFLICT (email) DO NOTHING";
+                }
+    
+                $stmt = $this->connection->prepare($sql);
+                $stmt->execute($values);
+            }
+    
+            if ($useTransaction) {
+                $this->connection->commit();
+            }
+        } catch (\Throwable $e) {
+            
+            // TODO: add pg errcodes appendix for unq constraint
+
+            if ($useTransaction) {
+                $this->connection->rollBack();
+            }
+            throw new \RuntimeException("Failed to insert users: " . $e->getMessage());
+        }
+    }
 }

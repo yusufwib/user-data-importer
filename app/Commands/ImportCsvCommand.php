@@ -6,17 +6,21 @@ use App\Database\DatabaseConfig;
 use App\Database\DatabaseConnection;
 use App\Repository\UserRepository;
 use App\Services\CsvProcessor;
+use App\Utilities\Constants;
 use App\Utilities\CliHelper;
 
 class ImportCsvCommand {
     private $options;
     private $filePath;
     private $ignoreDuplicates;
+    private $useTransactions;
 
     public function __construct(array $options) {
         $this->options          = $options;
         $this->filePath         = $options['file'];
         $this->ignoreDuplicates = isset($options['ignore_duplicates']);
+        $this->useTransactions  = isset($options['use_transactions']);
+        $this->batchSize        = $options['batch_size'] ?? Constants::DEFAULT_BATCH_SIZE;
     }
 
     public function execute(): void {
@@ -35,8 +39,6 @@ class ImportCsvCommand {
         $db = new DatabaseConnection($dbConfig);
         $repository = new UserRepository($db->getConnection());
 
-        foreach ($result['users'] as $user) {
-            $repository->insertUser($user, $this->ignoreDuplicates);
-        }
+        $repository->insertUsers($result['users'], $this->ignoreDuplicates, $this->useTransactions, $this->batchSize);
     }
 }
