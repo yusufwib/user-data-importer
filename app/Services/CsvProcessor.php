@@ -3,11 +3,16 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Utilities\Constants;
 
 class CsvProcessor {
     public function processFile(string $filePath): array {
         if (!file_exists($filePath)) {
             throw new \RuntimeException("File not found: $filePath");
+        }
+
+        if (pathinfo($filePath, PATHINFO_EXTENSION) !== Constants::ALLOWED_FILE_FORMATS) {
+            throw new \RuntimeException("Invalid file format. Only CSV files are allowed: $filePath");
         }
 
         $handle = fopen($filePath, 'r');
@@ -17,7 +22,7 @@ class CsvProcessor {
 
         $header = fgetcsv($handle);
         $lineNumber++;
-        
+
         try {
             $this->validateHeader($header);
         } catch (\InvalidArgumentException $e) {
@@ -27,10 +32,10 @@ class CsvProcessor {
 
         while (($row = fgetcsv($handle)) !== false) {
             $lineNumber++;
-            
+
             try {
                 if (count($row) !== 3) {
-                    $errors[] = "Line $lineNumber: " . "Invalid number of columns. Expected: 3, Found: " . count($row);
+                    $errors[] = "Line $lineNumber: Invalid number of columns. Expected: 3, Found: " . count($row);
                     continue;
                 }
 
@@ -54,8 +59,8 @@ class CsvProcessor {
 
     private function validateHeader(array $header): void {
         $expected = ['name', 'surname', 'email'];
-        
-        $normalizedHeader = array_map(function($item) {
+
+        $normalizedHeader = array_map(function ($item) {
             return strtolower(trim($item));
         }, $header);
 
