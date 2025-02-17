@@ -13,16 +13,14 @@ use App\Utilities\ImportResultPrinter;
 class ImportCsvCommand {
     private $options;
     private $filePath;
-    private $ignoreDuplicates;
+    private $checkDuplicates;
     private $useTransactions;
-    private $batchSize;
 
     public function __construct(array $options) {
         $this->options          = $options;
         $this->filePath         = $options['file'];
-        $this->ignoreDuplicates = $options['ignore_duplicates'] ?? true;
+        $this->checkDuplicates  = isset($options['check_duplicates']);
         $this->useTransactions  = isset($options['use_transactions']);
-        $this->batchSize        = $options['batch_size'] ?? Constants::DEFAULT_BATCH_SIZE;
     }
 
     public function execute(): void {
@@ -51,9 +49,8 @@ class ImportCsvCommand {
     
         $importResult = $repository->insertUsers(
             $result['users'],
-            $this->ignoreDuplicates,
-            $this->useTransactions,
-            $this->batchSize
+            $this->checkDuplicates,
+            $this->useTransactions
         );
 
         ImportResultPrinter::printErrors("Failed records", $importResult['failed_records']);

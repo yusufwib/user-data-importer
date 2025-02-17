@@ -28,13 +28,12 @@ class UserRepository {
 
     public function insertUsers(
         array $users, 
-        bool $ignoreDuplicates = true, 
-        bool $useTransaction = false,
-        int $batchSize = Constants::DEFAULT_BATCH_SIZE
+        bool $checkDuplicates = false, 
+        bool $useTransaction = false
     ): array {
         $successfulInserts = 0;
         $failedInserts = [];
-        $batches = array_chunk($users, $batchSize);
+        $batches = array_chunk($users, Constants::DEFAULT_BATCH_SIZE);
 
         if ($useTransaction) {
             $this->connection->beginTransaction();
@@ -54,7 +53,7 @@ class UserRepository {
     
                 $sql = "INSERT INTO users (name, surname, email) VALUES " . implode(", ", $placeholders);
     
-                if ($ignoreDuplicates) {
+                if (!$checkDuplicates) {
                     $sql .= " ON CONFLICT (email) DO NOTHING";
                 }
     
