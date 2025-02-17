@@ -9,12 +9,8 @@ class CliHelper {
             "create_table",
             "dry_run",
             "help",
-<<<<<<< HEAD
             "batch_size:",
             "db_name:",
-=======
-            "db_name",
->>>>>>> ef247d99c2bc08d0baa89f0167685e342c4ab77a
             "check_duplicates",
             "use_transactions",
         ]);
@@ -33,11 +29,7 @@ class CliHelper {
 
         echo "Additional Options:\n";
         echo "--db_name             PostgreSQL database name (default is 'user_data_importer').\n";
-<<<<<<< HEAD
         echo "--check_duplicates    Check duplicate emails (default is false).\n";
-=======
-        echo "--check_duplicates    Ignore duplicate emails (default is true).\n";
->>>>>>> ef247d99c2bc08d0baa89f0167685e342c4ab77a
         echo "--use_transactions    Use database transactions (default is false).\n";
 
         echo "Examples:\n";
