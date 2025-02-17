@@ -138,6 +138,7 @@ composer exec user_upload.php -- \
 
 1. **Unit Testing Suite**
 2. **Dependency Injection**
+3. **Installation Script: Automate setup process**
 
 ## Help?
 
