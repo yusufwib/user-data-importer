@@ -29,7 +29,7 @@ class CliHelper {
 
         echo "Additional Options:\n";
         echo "--db_name             PostgreSQL database name (default is 'user_data_importer').\n";
-        echo "--ignore_duplicates   Ignore duplicate emails (default is false).\n";
+        echo "--ignore_duplicates   Ignore duplicate emails (default is true).\n";
         echo "--use_transactions    Use database transactions (default is false).\n";
         echo "--batch_size          Number of users to process at once (default is 100).\n\n";
 
@@ -45,5 +45,10 @@ class CliHelper {
         echo "  - CSV Format: Must have 3 columns (name, surname, email) with a header row.\n";
         echo "  - Email: Lowercased and validated.\n";
         echo "  - Name/Surname: Auto-capitalized.\n";
+    }
+
+    public static function getDuplicateEmail($message): string {
+        preg_match("/Key \\(email\\)=\\((.*?)\\) already exists/", $message, $matches);
+        return $matches[1] ?? "Unknown Email";
     }
 }
