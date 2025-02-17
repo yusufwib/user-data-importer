@@ -45,14 +45,14 @@ git clone https://github.com/yusufwib/user-data-importer.git
 cd user-data-importer
 ```
 
-# Install project dependencies
+## Install project dependencies
 
 ```bash
 composer install
 composer dump-autoload
 ```
 
-# Make the script executable
+## Make the script executable
 
 ```bash
 chmod +x scripts/user_upload.php
