@@ -29,12 +29,16 @@ class UserRepository {
     public function insertUsers(
         array $users, 
         bool $checkDuplicates = false, 
+<<<<<<< HEAD
         bool $useTransaction = false,
         int $batchSize = Constants::DEFAULT_BATCH_SIZE
+=======
+        bool $useTransaction = false
+>>>>>>> ef247d99c2bc08d0baa89f0167685e342c4ab77a
     ): array {
         $successfulInserts = 0;
         $failedInserts = [];
-        $batches = array_chunk($users, $batchSize);
+        $batches = array_chunk($users, Constants::DEFAULT_BATCH_SIZE);
 
         if ($useTransaction) {
             $this->connection->beginTransaction();
