@@ -13,9 +13,6 @@ A robust PHP CLI tool for importing CSV user data into PostgreSQL with advanced 
 - [Usage](#usage)
   - [Basic Commands](#basic-commands)
   - [Advanced Scenarios](#advanced-scenarios)
-- [Options Reference](#options-reference)
-- [Error Handling](#error-handling)
-- [Data Processing Rules](#data-processing-rules)
 
 ## Features ✨
 
@@ -53,6 +50,12 @@ cd user-data-importer
 ```bash
 composer install
 composer dump-autoload
+```
+
+# Make the script executable
+
+```bash
+chmod +x scripts/user_upload.php
 ```
 
 ## Configuration ⚙️
