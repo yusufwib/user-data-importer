@@ -34,9 +34,9 @@ A robust PHP CLI tool for importing CSV user data into PostgreSQL with advanced 
 | Component       | Requirement              | Tested Version |
 |-----------------|--------------------------|----------------|
 | PHP             | >= 8.3                   | 8.3            |
-| PostgreSQL      | >= 13                    | 14           |
+| PostgreSQL      | >= 13                    | 14             |
 | Composer        | Stable version           | 2.3.9          |
-| PHP Extensions  | pgsql              |                |
+| PHP Extensions  | pgsql                    |                |
 
 ## Installation 📦
 
@@ -134,6 +134,11 @@ composer exec user_upload.php -- \
   -h localhost
   --db_name alternate_db
 ```
+
+### Future Development
+
+**1. Unit Testing Suite**
+**2. Dependency Injection**
 
 ## Help?
 
