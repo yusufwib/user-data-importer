@@ -5,7 +5,8 @@ namespace App\Commands;
 use App\Database\DatabaseConfig;
 use App\Database\DatabaseConnection;
 use App\Repository\UserRepository;
-use App\Utilities\CliHelper;
+use App\Utilities\Constants;
+use App\Utilities\Logger;
 
 class CreateTableCommand {
     private $options;
@@ -19,11 +20,17 @@ class CreateTableCommand {
             throw new \InvalidArgumentException("Missing required options! Please provide -u (username), -p (password), and -h (host) when using --create_table");
         }
 
-        $dbConfig = new DatabaseConfig($this->options);
-        $db = new DatabaseConnection($dbConfig);
-        $repository = new UserRepository($db->getConnection());
-        $repository->createTable();
-        
-        echo "Success: Users table has been created and is all set for use.\n";
+        Logger::log(Constants::LOG_TYPE_PLAIN, "Creating users table started...\n", true);
+
+        try {
+            $dbConfig = new DatabaseConfig($this->options);
+            $db = new DatabaseConnection($dbConfig);
+            $repository = new UserRepository($db->getConnection());
+            $repository->createTable();
+
+            Logger::log(Constants::LOG_TYPE_SUCCESS, 'Users table has been created and is all set for use.', true);
+        } catch (\Exception $e) {
+            throw new \RuntimeException($e->getMessage());
+        }
     }
 }

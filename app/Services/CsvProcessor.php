@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Utilities\CliHelper;
 
 class CsvProcessor {
     public function processFile(string $filePath): array {
@@ -30,6 +29,11 @@ class CsvProcessor {
             $lineNumber++;
             
             try {
+                if (count($row) !== 3) {
+                    $errors[] = "Line $lineNumber: " . "Invalid number of columns. Expected: 3, Found: " . count($row);
+                    continue;
+                }
+
                 $users[] = new User(
                     $this->validateAndFormatName($row[0] ?? ''),
                     $this->validateAndFormatName($row[1] ?? ''),

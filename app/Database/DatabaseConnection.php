@@ -11,8 +11,8 @@ class DatabaseConnection {
     private DatabaseConfig $config;
 
     public function __construct(DatabaseConfig $config) {
-        $this->config = $config;
-        $dsn = "pgsql:host={$config->getHost()};dbname={$config->getDbName()}";
+        $this->config   = $config;
+        $dsn            = "pgsql:host={$config->getHost()};dbname={$config->getDbName()}";
 
         try {
             $this->connection = new PDO($dsn, $config->getUsername(), $config->getPassword());

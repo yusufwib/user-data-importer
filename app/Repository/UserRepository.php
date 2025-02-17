@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Models\User;
 use PDO;
+use App\Utilities\Constants;
 
 class UserRepository {
     private $connection;
@@ -29,7 +30,8 @@ class UserRepository {
         bool $ignoreDuplicates = false, 
         bool $useTransaction = false,
         int $batchSize = 100
-    ): void {
+    ): array {
+        $errors = [];
         $batches = array_chunk($users, $batchSize);
         if ($useTransaction) {
             $this->connection->beginTransaction();
@@ -61,13 +63,19 @@ class UserRepository {
                 $this->connection->commit();
             }
         } catch (\Throwable $e) {
-            
-            // TODO: add pg errcodes appendix for unq constraint
-
             if ($useTransaction) {
                 $this->connection->rollBack();
             }
-            throw new \RuntimeException("Failed to insert users: " . $e->getMessage());
+
+            if ($e->getCode() === Constants::PG_DUPLICATE_ERROR_CODE) {
+                $errors[] = "Duplicate email: " . $e->getMessage() . ".";
+            } else {
+                $errors[] = "Database error - " . $e->getMessage() . ".";
+            }
         }
+
+        return [
+            'errors' => $errors,
+        ];
     }
 }

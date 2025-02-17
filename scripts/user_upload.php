@@ -9,6 +9,7 @@ use App\Commands\DryRunCommand;
 use App\Commands\ImportCsvCommand;
 use App\Utilities\CliHelper;
 use App\Utilities\Constants;
+use App\Utilities\Logger;
 
 function main(): void {
     $options = CliHelper::getOptions();
@@ -36,12 +37,12 @@ function main(): void {
         }
 
         if (!$executed) {
-            CliHelper::log(Constants::LOG_TYPE_ERROR, 'No valid options provided. Use --help for usage information.');
+            Logger::log(Constants::LOG_TYPE_ERROR, 'No valid options provided. Use --help for usage information.');
             exit(1);
         }
         exit(0);
     } catch (Throwable $e) {
-        CliHelper::log(Constants::LOG_TYPE_ERROR, 'Fatal Error: ' . $e->getMessage());
+        Logger::log(Constants::LOG_TYPE_ERROR, 'Fatal Error: ' . $e->getMessage(), true);
         exit(1);
     }
 }

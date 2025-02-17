@@ -10,10 +10,10 @@ class DatabaseConfig {
     private string $dbName;
 
     public function __construct(array $options) {
-        $this->host = $options['h'];
+        $this->host     = $options['h'];
         $this->username = $options['u'];
         $this->password = $options['p'];
-        $this->dbName = $options['db_name'] ?? Constants::DEFAULT_DB_NAME;
+        $this->dbName   = $options['db_name'] ?? Constants::DEFAULT_DB_NAME;
     }
 
     public function getHost(): string {
