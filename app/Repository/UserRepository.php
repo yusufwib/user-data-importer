@@ -28,7 +28,7 @@ class UserRepository {
 
     public function insertUsers(
         array $users, 
-        bool $ignoreDuplicates = true, 
+        bool $checkDuplicates = false, 
         bool $useTransaction = false,
         int $batchSize = Constants::DEFAULT_BATCH_SIZE
     ): array {
@@ -54,7 +54,7 @@ class UserRepository {
     
                 $sql = "INSERT INTO users (name, surname, email) VALUES " . implode(", ", $placeholders);
     
-                if ($ignoreDuplicates) {
+                if (!$checkDuplicates) {
                     $sql .= " ON CONFLICT (email) DO NOTHING";
                 }
     
