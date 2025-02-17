@@ -49,7 +49,6 @@ cd user-data-importer
 
 ```bash
 composer install
-composer dump-autoload
 ```
 
 ## Make the script executable
@@ -137,8 +136,8 @@ composer exec user_upload.php -- \
 
 ### Future Development
 
-**1. Unit Testing Suite**
-**2. Dependency Injection**
+1. **Unit Testing Suite**
+2. **Dependency Injection**
 
 ## Help?
 
