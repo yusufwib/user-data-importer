@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Models\User;
 use PDO;
 use App\Utilities\Constants;
+use App\Utilities\CliHelper;
 
 class UserRepository {
     private $connection;
@@ -27,12 +28,14 @@ class UserRepository {
 
     public function insertUsers(
         array $users, 
-        bool $ignoreDuplicates = false, 
+        bool $ignoreDuplicates = true, 
         bool $useTransaction = false,
-        int $batchSize = 100
+        int $batchSize = Constants::DEFAULT_BATCH_SIZE
     ): array {
-        $errors = [];
+        $successfulInserts = 0;
+        $failedInserts = [];
         $batches = array_chunk($users, $batchSize);
+
         if ($useTransaction) {
             $this->connection->beginTransaction();
         }
@@ -57,6 +60,8 @@ class UserRepository {
     
                 $stmt = $this->connection->prepare($sql);
                 $stmt->execute($values);
+
+                $successfulInserts += $stmt->rowCount();
             }
     
             if ($useTransaction) {
@@ -68,14 +73,16 @@ class UserRepository {
             }
 
             if ($e->getCode() === Constants::PG_DUPLICATE_ERROR_CODE) {
-                $errors[] = "Duplicate email: " . $e->getMessage() . ".";
+                $duplicateEmail = CliHelper::getDuplicateEmail($e->getMessage());
+                $failedInserts[] = "Duplicate email: $duplicateEmail";
             } else {
-                $errors[] = "Database error - " . $e->getMessage() . ".";
+                $failedInserts[] = "Database error - " . $e->getMessage() . ".";
             }
         }
-
+    
         return [
-            'errors' => $errors,
+            'success_count'     => $successfulInserts,
+            'failed_records'    => $failedInserts,
         ];
     }
 }

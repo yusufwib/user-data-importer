@@ -56,7 +56,7 @@ class ImportCsvCommand {
             $this->batchSize
         );
 
-        ImportResultPrinter::printErrors("Import errors", $importResult['failed_records']);
+        ImportResultPrinter::printErrors("Failed records", $importResult['failed_records']);
     
         Logger::log(
             Constants::LOG_TYPE_SUCCESS, 
